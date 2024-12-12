@@ -2,7 +2,6 @@
                     .Select(s => s.ToCharArray())
                     .ToArray();
 
-
 var globalVisited = new HashSet<(int, int)>();
 var perimeters = new HashSet<((int, int), (int, int), char)>();
 long part1Answer = 0, part2Answer = 0;
@@ -56,35 +55,41 @@ int Dfs(int i, int j)
     return area;
 }
 
-HashSet<((int, int), (int, int), char)> FilterPerimeters(HashSet<((int, int), (int, int), char)> perimeters)
+HashSet<((int, int), (int, int), char)> FilterPerimeters(HashSet<((int, int), (int, int), char)> set)
 {
-    var filteredPerimeters = new HashSet<((int, int), (int, int), char)>(perimeters);
-    foreach (var (pointA, pointB, direction) in perimeters)
+    var filteredPerimeters = new HashSet<((int, int), (int, int), char)>(set);
+    foreach (var (pointA, pointB, direction) in set)
     {
-        if (direction == 'v')
+        switch (direction)
         {
-            var nextA = (pointA.Item1 + 1, pointA.Item2);
-            var nextB = (pointB.Item1 + 1, pointB.Item2);
-            while (filteredPerimeters.Contains((nextA, nextB, direction)))
+            case 'v':
             {
-                filteredPerimeters.Remove((nextA, nextB, direction));
-                nextA = (nextA.Item1 + 1, nextA.Item2);
-                nextB = (nextB.Item1 + 1, nextB.Item2);
+                var nextA = (pointA.Item1 + 1, pointA.Item2);
+                var nextB = (pointB.Item1 + 1, pointB.Item2);
+                while (filteredPerimeters.Contains((nextA, nextB, direction)))
+                {
+                    filteredPerimeters.Remove((nextA, nextB, direction));
+                    nextA = (nextA.Item1 + 1, nextA.Item2);
+                    nextB = (nextB.Item1 + 1, nextB.Item2);
+                }
+
+                break;
+            }
+            case 'h':
+            {
+                var nextA = (pointA.Item1, pointA.Item2 + 1);
+                var nextB = (pointB.Item1, pointB.Item2 + 1);
+                while (filteredPerimeters.Contains((nextA, nextB, direction)))
+                {
+                    filteredPerimeters.Remove((nextA, nextB, direction));
+                    nextA = (nextA.Item1, nextA.Item2 + 1);
+                    nextB = (nextB.Item1, nextB.Item2 + 1);
+                }
+
+                break;
             }
         }
-        if (direction == 'h')
-        {
-            var nextA = (pointA.Item1, pointA.Item2 + 1);
-            var nextB = (pointB.Item1, pointB.Item2 + 1);
-            while (filteredPerimeters.Contains((nextA, nextB, direction)))
-            {
-                filteredPerimeters.Remove((nextA, nextB, direction));
-                nextA = (nextA.Item1, nextA.Item2 + 1);
-                nextB = (nextB.Item1, nextB.Item2 + 1);
-            }
-        } 
     }
 
     return filteredPerimeters;
 }
-
